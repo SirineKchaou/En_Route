@@ -1,0 +1,251 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include <conio.h>
+typedef struct {
+            int jour;
+            int mois;
+            int annee;
+}DATE;
+struct Client{
+            int CIN;
+            char nom[30];
+            char prenom[30];
+            int Tel;
+            DATE date_permi;
+            struct Client *suiv;
+};
+typedef struct {
+  struct Client *tete;
+  struct Client *queue;
+} clients;
+struct Voiture {
+    char marque[15];
+    char couleur[7];
+    int prix_jour;
+    int etat;
+    int mat;
+    struct Voiture *suiv;
+};
+typedef struct {
+  struct Voiture *tete;
+  struct Voiture *queue;
+} voitures;
+void Initialiser_Clients(clients *c) {
+  c->tete = NULL;
+  c->queue = NULL;
+}
+void Ajouter_Client(clients *c) {
+  struct Client *clt;
+  clt = malloc(sizeof(struct Client));
+	printf("\n\t\tNom: ");
+	scanf("%s",&clt->nom);
+	printf("\n\t\tPrenom: ");
+	scanf("%s",&clt->prenom);
+	 printf("\n\t\tNumero de Carte D'identite :");
+  scanf("%d",&clt->CIN);
+	 printf("\n\t\tNumero de Telephone :");
+  scanf("%d",&clt->Tel);
+  printf("\n\t\tDate de permis (jj-mm-aaaa) :");
+  scanf("%d",&clt->date_permi);
+  clt->suiv = NULL;
+  int trouve=0;
+  if(trouve==1){
+    printf("Client deja enregistrer!");
+    free(clt);
+  }else{
+  if (c->tete == NULL) {
+    c->tete = clt;
+    c->queue = clt;
+  } else {
+    clt->suiv = c->tete;
+    c->tete = clt;
+  }
+  }
+}
+void Supprimer_Client(clients *c){
+    struct Client *tmp=c->tete;
+    int trouve=0,id;
+    printf("saisir le numero de carte d'identite :\t");
+    scanf("%d",&id);
+    if(trouve==0){
+        printf("client n'existe pas!\nveillez verifier le numero de CID");
+        getch();
+    }else{
+
+
+    tmp=c->tete;
+    if(tmp!=NULL&&tmp->CIN==id){
+        c->tete=tmp->suiv;
+        free(tmp);
+    }else{
+        struct Client *pre=NULL;
+    while(tmp!=NULL&&tmp->CIN!=id){
+        pre=tmp;
+        tmp=tmp->suiv;
+    }
+    pre->suiv=tmp->suiv;
+    free(tmp);
+    }
+    }
+}
+void Afficher_Clients(clients *c) {
+  struct Client *tmp= c->tete;
+   if (tmp == NULL) {
+    printf("\nAucun clients enregistres!");
+  } else {
+    while (tmp!= NULL) {
+      printf("CIN : %d \n Nom : %s \n Prenom : %s \n Telephone :%d \n Date de permis: %d-%d-%d \n\n", tmp->CIN, tmp->nom, tmp->prenom, tmp->Tel, tmp->date_permi.jour, tmp->date_permi.mois, tmp->date_permi.annee);
+      tmp=tmp->suiv;
+    }
+  }
+}
+void Initialiser_Voitures(voitures *v) {
+  v->tete=NULL;
+  v->queue=NULL;
+}
+void Ajouter_Voiture(voitures *v){
+    struct Voiture *voit= malloc(sizeof(struct Voiture));
+    struct Voiture *x=v->tete;
+    int trouve=0;
+    printf("\n\t\tMarque :\t");
+    scanf("%s",&voit->marque);
+    printf("\n\t\tCouleur :\t");
+    scanf("%s",&voit->couleur);
+    printf("\n\t\tEtat :\t");
+    scanf("%d",&voit->etat);
+    printf("\n\t\tPrix par jour :\t");
+    scanf("%d",&voit->prix_jour);
+    printf("\n\t\tMatricule :\t");
+    scanf("%d",&voit->mat);
+    voit->suiv = NULL;
+    while(x!=NULL){
+    if(x->mat==voit->mat){
+            trouve=1;
+            break;
+            }
+            x=x->suiv;
+  }
+  if(trouve==1){
+    printf("chambre deja enregistrer!");
+  }else{
+    if (v->tete == NULL) {
+            v->tete=voit;
+            v->queue =voit;
+  } else {
+      voit->suiv=v->tete;
+      v->tete=voit;
+  }
+  }
+}
+void Afficher_Voitures(voitures *v){
+   struct Voiture *x=v->tete;
+   while(x != NULL){
+        printf("\n\n  La marque de la voiture est : %s",x->marque);
+        printf("\n\n  La matricule est est :%d ",x->mat);
+        printf("\n\n  Le couleur de voiture: %s",x->couleur);
+        printf("\n\n  Le prix par jour: %d",x->prix_jour);
+        x=x->suiv;
+    }
+void Supprimer_Voitures(voitures *v){
+    struct Voiture *x=v-> tete;
+    int mat;
+    printf("saisir matricule de voiture a supprimer et choisi par le du client :");
+    scanf("%s",mat);
+    if(strcmp(mat,v->tete->mat)==0){
+            struct  voiture *p=v->tete;
+            v->tete=v->tete->suiv;
+            free(p);
+            }else{
+                while(x->suiv!=NULL){
+                        if (strcmp(x->mat,mat)==0){
+                            struct  voiture *p=x->suiv;
+                            x->suiv=x->suiv->suiv;
+                            free(p);
+                            }
+                            x=x->suiv;
+                            }
+                            }
+}
+int main(void) {
+  clients *c = malloc(sizeof(clients));
+  voitures *v = malloc(sizeof(voitures));
+  int choix1,choix2;
+  Initialiser_Clients(c);
+  Initialiser_Voitures(v);
+   do{
+    system("cls");
+    printf("\t\t  ***Menu Principale ***\n\n");
+	printf(" \nGestion clients.......................:1\n");
+	printf("\nGestion voitures......................:2\n");
+	printf("\nQuitter...............................:0\n");
+	printf("\n\n..........................Votre choix  :  ");
+    scanf("%d",&choix1);
+    if(choix1==1){
+            do{
+        system("cls");
+        printf("\t\t* Gestion des clients *");
+        printf("\n\n-Ajouter un nouveau client ..............:A \n");
+        printf("-Supprimer  un compte client ...........:B\n");
+        printf("-Lister tous les comptes des clients ......:C\n");
+        printf("-Quitter ..................................:D\n");
+        printf(".........................Votre choix : ");
+        scanf("%c",&choix2);
+        printf("\n");
+        switch(choix2){
+            case'a':
+                case'A':
+                    system("cls");
+                    Ajouter_Client(c);
+                    break;
+            case'b':
+                case'B':
+                    system("cls");
+                    Supprimer_Client(c);
+                    break;
+            case'c':
+                case 'C':
+                    system("cls");
+                    Afficher_Clients(c);
+                    break;
+            default:
+                printf("Erreur de saisie,recommencez....\n");
+                break;
+                }
+                }while(choix2!='d'&&choix2!='D');
+   }else{if(choix1==2){
+       do{
+             system("cls");
+        printf("\t\t* Gestion des voitures *");
+        printf("\n\n-Ajouter une voiture ..............:A \n");
+        printf("-Supprimer  une voiture ...........:B\n");
+        printf("-Lister tous les voitures ......:C\n");
+        printf("-Quitter ..................................:D\n");
+        printf(".........................votre choix : ");
+        scanf("%c",&choix2);
+        printf("\n");
+       switch(choix2){
+                                   case'a':
+                                       case'A':
+                                               system("cls");
+                                               Ajouter_Voiture(v);
+                                               break;
+                                   case'b':
+                                       case'B':
+                                           system("cls");
+                                           Supprimer_Voitures(v);
+                                           break;
+                                   case'c':
+                                       case'C':
+                                           system("cls");
+                                           Afficher_Voitures(v);
+                                           break;
+                                   default:
+                                       printf("Erreur de saisie,recommencez....\n");
+                                       break;
+                                       }
+                                       }while(choix2!='d'&& choix2!='D');
+                                       }
+                                       }
+                                       }while(choix1!= 0);
+                                       }
